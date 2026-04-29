@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { Send, User, Mail, Phone, Calendar, Users, MessageSquare, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { trackReservationSubmit } from "@/lib/gtm";
 
 const activities = [
   { value: "paramoteur", label: "Paramoteur" },
@@ -34,7 +36,10 @@ export const ReservationSection = () => {
   const [participants, setParticipants] = useState("");
   const [message, setMessage]           = useState("");
 
-  const toggleActivity = (value: string) => {
+  // reCAPTCHA v3 — hook is a no-op when the provider is not mounted
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const toggleActivity = useCallback((value: string) => {
     setSelectedActivities((prev) => {
       const next = prev.includes(value)
         ? prev.filter((v) => v !== value)
@@ -42,16 +47,14 @@ export const ReservationSection = () => {
       if (next.length > 0) setActivitiesError(false);
       return next;
     });
-  };
+  }, []);
 
-  const removeActivity = (value: string) => {
+  const removeActivity = useCallback((value: string) => {
     setSelectedActivities((prev) => prev.filter((v) => v !== value));
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    
 
     if (selectedActivities.length === 0) {
       setActivitiesError(true);
@@ -59,11 +62,17 @@ export const ReservationSection = () => {
       return;
     }
     setActivitiesError(false);
-
     setIsSubmitting(true);
+
     const form = e.target as HTMLFormElement;
 
     try {
+      // Generate reCAPTCHA v3 token (invisible to the user).
+      // Falls back to empty string when the provider is not configured.
+      let recaptchaToken = "";
+      if (executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha("reservation_submit");
+      }
 
       const res = await fetch("/api/reservation", {
         method: "POST",
@@ -76,7 +85,7 @@ export const ReservationSection = () => {
           participants,
           message,
           activities: selectedActivities,
-          // recaptchaToken,
+          recaptchaToken,
         }),
       });
 
@@ -85,6 +94,9 @@ export const ReservationSection = () => {
         toast.error(data.error || "Une erreur est survenue.");
         return;
       }
+
+      // Fire GTM / GA conversion event
+      trackReservationSubmit();
 
       setIsSuccess(true);
       form.reset();
