@@ -9,7 +9,7 @@ const activities = [
     id: "paramoteur",
     title: "Paramoteur",
     description: "Un vol proche du sol, offrant une sensation de liberté pure. Une expérience douce mais intense pour découvrir le ciel autrement.",
-    image: "/images/paramoteur.jpg",
+    image: "/images/paramoteur.webp",
     cta: "Découvrir le paramoteur",
   },
   {

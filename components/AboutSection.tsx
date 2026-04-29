@@ -96,7 +96,7 @@ export const AboutSection = () => {
                 { value: "5000+", label: "Vols", position: "top-0 left-0" },
                 { value: "100%", label: "Sécurité", position: "top-0 right-0" },
                 { value: "4.9★", label: "Avis", position: "bottom-0 left-0" },
-                { value: "3", label: "Bases", position: "bottom-0 right-0" },
+                { value: "6+", label: "Bases", position: "bottom-0 right-0" },
               ].map((badge, index) => (
                 <motion.div
                   key={index}

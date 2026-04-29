@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Instagram, Facebook, Youtube, MapPin, Phone, Mail } from "lucide-react";
+import { Instagram, Facebook, Youtube, MapPin, Phone, Mail, Target } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const footerLinks = {
@@ -9,7 +9,7 @@ const footerLinks = {
     { label: "Parapente", href: "#activites" },
     { label: "Parachutisme", href: "#activites" },
     { label: "Montgolfière", href: "#activites" },
-    { label: "FLY TAGHAZOUT", href: "#fly-taghazout" },
+    { label: "FLY TAGHAZOUT", href: "https://www.flytaghazout.com/", external: true },
   ],
   destinations: [
     { label: "Marrakech", href: "#destinations" },
@@ -26,9 +26,8 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Youtube, href: "#", label: "Youtube" },
+  { icon: Instagram, href: "https://www.instagram.com/extreme_adrenaline_sports", label: "Instagram" },
+  { icon: Facebook, href: "https://www.facebook.com/share/1BwrZZQzYJ/", label: "Facebook" },
 ];
 
 export const Footer = () => {
@@ -59,6 +58,7 @@ export const Footer = () => {
                 <motion.a
                   key={social.label}
                   href={social.href}
+                  target="_blank"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors"
@@ -76,7 +76,9 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.activities.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-muted-foreground hover:text-primary transition-colors">
+                  <a href={link.href} 
+                    {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
+                    className="text-muted-foreground hover:text-primary transition-colors">
                     {link.label}
                   </a>
                 </li>
@@ -134,7 +136,16 @@ export const Footer = () => {
         <div className="container py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} HOVERSWITCH, appuyé par MONARK IT. Tous droits réservés.
+              © {new Date().getFullYear()}{" "}  Etreme Sports Events, appuyé par{" "}
+              <a
+                href="https://monarkit.net"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold hover:text-primary transition-colors"
+              >
+                MONARK IT
+              </a>
+              . Tous droits réservés.
             </p>
             <div className="flex items-center gap-6">
               <a href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">

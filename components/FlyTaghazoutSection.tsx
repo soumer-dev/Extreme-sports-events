@@ -4,7 +4,7 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { Check, Star, Camera, Users, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import taghazoutImg from "@/assets/taghazout.jpg";
+import taghazoutImg from "@/assets/taghazout.webp";
 
 const features = [
   {
@@ -37,7 +37,7 @@ export const FlyTaghazoutSection = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="/images/taghazout.jpg"
+          src="/images/taghazout.webp"
           alt="Vue aérienne de Taghazout"
           className="w-full h-full object-cover"
         />

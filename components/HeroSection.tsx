@@ -7,7 +7,7 @@ export const HeroSection = () => {
   return (
     <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden">  <div className="absolute inset-0">
         <img
-          src="/images/hero-bg.jpg"
+          src="/images/hero-activites.webp"
           alt="Paramoteur au-dessus des falaises du Maroc"
           className="w-full h-full object-cover"
         />
