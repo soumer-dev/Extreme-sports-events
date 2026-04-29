@@ -122,23 +122,15 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(resendApiKey);
 
-    // FROM address must be a verified Resend domain in production.
-    // "onboarding@resend.dev" only works when sending to the Resend account owner's email.
-    // Set RESEND_FROM_EMAIL to an address on your verified domain, e.g.:
-    //   RESEND_FROM_EMAIL=reservations@extremesportsevents.ma
-    const fromEmail =
-      process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
-
     const { error: sendError } = await resend.emails.send({
-      from: fromEmail,
-      to: recipients,          // array → Resend sends to all recipients
+      from: "onboarding@resend.dev",
+      to: recipients,
       replyTo: email,
       subject: `Réservation — ${activity} — ${name}`,
       html,
     });
 
     if (sendError) {
-      // Log the full Resend error object for easier debugging in Vercel logs
       console.error("Resend send error:", JSON.stringify(sendError));
       return NextResponse.json(
         { error: "Erreur lors de l'envoi de l'email." },
