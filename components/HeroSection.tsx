@@ -19,28 +19,6 @@ export const HeroSection = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(0,0,0,0.5)_100%)]" />
       </div>
 
-      {/* Animated Particles/Lines Effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-px h-32 bg-gradient-to-b from-transparent via-primary/30 to-transparent"
-            style={{
-              left: `${20 + i * 15}%`,
-              top: `${10 + i * 10}%`,
-            }}
-            animate={{
-              y: [0, 200, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              delay: i * 0.5,
-            }}
-          />
-        ))}
-      </div>
 
       {/* Content */}
       <div className="relative z-10 container text-center">
