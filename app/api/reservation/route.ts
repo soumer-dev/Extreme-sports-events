@@ -122,10 +122,13 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(resendApiKey);
 
-    // Derive "from" from the first recipient's domain so it uses the verified Resend domain.
-    // e.g. RECIPIENT_EMAIL=contact@extremesportsevents.ma → from: "Extreme Sport Events <noreply@extremesportsevents.ma>"
-    const senderDomain = recipients[0].split("@")[1];
-    const fromAddress = `Extreme Sport Events <noreply@${senderDomain}>`;
+    // Build the "from" address using the domain of the LAST recipient.
+    // The last entry in RECIPIENT_EMAIL should be on your Resend-verified domain
+    // (e.g. admin@extremesportsevents.ma → noreply@extremesportsevents.ma).
+    // If you have multiple recipients from different domains, put your verified
+    // domain address last in RECIPIENT_EMAIL.
+    const verifiedDomain = recipients[recipients.length - 1].split("@")[1];
+    const fromAddress = `Extreme Sport Events <noreply@${verifiedDomain}>`;
 
     const { error: sendError } = await resend.emails.send({
       from: fromAddress,
@@ -136,7 +139,8 @@ export async function POST(request: NextRequest) {
     });
 
     if (sendError) {
-      console.error("Resend send error:", JSON.stringify(sendError));
+      // Log the full Resend error so it appears clearly in Vercel / server logs
+      console.error("Resend send error:", JSON.stringify(sendError, null, 2));
       return NextResponse.json(
         { error: "Erreur lors de l'envoi de l'email." },
         { status: 500 }
