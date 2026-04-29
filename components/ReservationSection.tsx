@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { Send, User, Mail, Phone, Calendar, Users, MessageSquare, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,13 @@ export const ReservationSection = () => {
 
   // reCAPTCHA v3 — hook is a no-op when the provider is not mounted
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  // Auto-hide success banner after 5 seconds
+  useEffect(() => {
+    if (!isSuccess) return;
+    const timer = setTimeout(() => setIsSuccess(false), 5000);
+    return () => clearTimeout(timer);
+  }, [isSuccess]);
 
   const toggleActivity = useCallback((value: string) => {
     setSelectedActivities((prev) => {
@@ -352,9 +359,9 @@ export const ReservationSection = () => {
 
       {/* Success banner */}
       {isSuccess && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-2xl p-8 bg-green-600 text-white rounded-xl shadow-2xl border border-green-500 flex flex-col items-center justify-center animate-slideDown">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-2xl p-8 bg-white text-black rounded-xl shadow-2xl border border-gray-200 flex flex-col items-center justify-center animate-slideDown">
           <X
-            className="absolute top-4 right-4 w-6 h-6 cursor-pointer"
+            className="absolute top-4 right-4 w-6 h-6 cursor-pointer hover:text-gray-500"
             onClick={() => setIsSuccess(false)}
           />
           <h3 className="text-2xl font-bold mb-2">Merci ! 🎉</h3>

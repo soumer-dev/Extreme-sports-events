@@ -142,7 +142,11 @@ export async function POST(request: NextRequest) {
       // Log the full Resend error so it appears clearly in Vercel / server logs
       console.error("Resend send error:", JSON.stringify(sendError, null, 2));
       return NextResponse.json(
-        { error: "Erreur lors de l'envoi de l'email." },
+        {
+          error: "Erreur lors de l'envoi de l'email.",
+          // Expose Resend's error detail so we can diagnose from the browser
+          detail: sendError,
+        },
         { status: 500 }
       );
     }
@@ -150,6 +154,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Reservation API error:", error);
-    return NextResponse.json({ error: "Erreur interne." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Erreur interne.",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
   }
 }
