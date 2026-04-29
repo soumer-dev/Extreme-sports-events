@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { verifyRecaptcha } from "@/lib/recaptcha";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
-
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function escapeHtml(str: string) {
@@ -98,6 +96,18 @@ export async function POST(request: NextRequest) {
     `;
 
     // ── Send via Resend ─────────────────────────────────────────────────────
+    // Lazy-initialize Resend client to avoid build-time errors when env var is missing
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      console.error("RESEND_API_KEY is not configured");
+      return NextResponse.json(
+        { error: "Service email non configuré." },
+        { status: 500 }
+      );
+    }
+
+    const resend = new Resend(resendApiKey);
+
     const { error: sendError } = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: process.env.RECIPIENT_EMAIL!,
