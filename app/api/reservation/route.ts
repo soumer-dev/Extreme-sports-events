@@ -122,8 +122,13 @@ export async function POST(request: NextRequest) {
 
     const resend = new Resend(resendApiKey);
 
+    // Derive "from" from the first recipient's domain so it uses the verified Resend domain.
+    // e.g. RECIPIENT_EMAIL=contact@extremesportsevents.ma → from: "Extreme Sport Events <noreply@extremesportsevents.ma>"
+    const senderDomain = recipients[0].split("@")[1];
+    const fromAddress = `Extreme Sport Events <noreply@${senderDomain}>`;
+
     const { error: sendError } = await resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: fromAddress,
       to: recipients,
       replyTo: email,
       subject: `Réservation — ${activity} — ${name}`,
