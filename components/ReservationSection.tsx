@@ -354,7 +354,7 @@ export const ReservationSection = () => {
       {isSuccess && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-2xl p-8 bg-green-600 text-white rounded-xl shadow-2xl border border-green-500 flex flex-col items-center justify-center animate-slideDown">
           <X
-            className="absolute top-4 right-4 w-6 h-6 cursor-pointer hover:text-green-200"
+            className="absolute top-4 right-4 w-6 h-6 cursor-pointer"
             onClick={() => setIsSuccess(false)}
           />
           <h3 className="text-2xl font-bold mb-2">Merci ! 🎉</h3>

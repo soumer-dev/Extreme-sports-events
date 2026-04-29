@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { verifyRecaptcha } from "@/lib/recaptcha";
+import { parseRecipients } from "@/lib/recipients";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -106,11 +107,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Parse RECIPIENT_EMAIL — supports comma- or semicolon-separated addresses
+    const recipients = parseRecipients(process.env.RECIPIENT_EMAIL);
+    if (recipients.length === 0) {
+      console.error(
+        "RECIPIENT_EMAIL is not configured or contains no valid addresses. " +
+        `Value received: "${process.env.RECIPIENT_EMAIL ?? ""}"`
+      );
+      return NextResponse.json(
+        { error: "Destinataire email non configuré." },
+        { status: 500 }
+      );
+    }
+
     const resend = new Resend(resendApiKey);
 
     const { error: sendError } = await resend.emails.send({
       from: "onboarding@resend.dev",
-      to: process.env.RECIPIENT_EMAIL!,
+      to: recipients,          // array → Resend sends to all recipients
       replyTo: email,
       subject: `Réservation — ${activity} — ${name}`,
       html,
