@@ -1,5 +1,4 @@
-"use client";
-import { motion } from "framer-motion";
+// Server component — no "use client" needed, no framer-motion
 import { Instagram, Facebook, MapPin, Phone, Mail } from "lucide-react";
 
 const footerLinks = {
@@ -15,12 +14,6 @@ const footerLinks = {
     { label: "Agadir", href: "#destinations" },
     { label: "Taghazout", href: "#destinations" },
     { label: "Autres destinations", href: "#destinations" },
-  ],
-  company: [
-    { label: "À propos", href: "#about" },
-    { label: "Pourquoi nous", href: "#pourquoi-nous" },
-    { label: "Réservation", href: "#reservation" },
-    { label: "Contact", href: "#reservation" },
   ],
 };
 
@@ -41,6 +34,8 @@ export const Footer = () => {
               <img
                 src="/lovable-uploads/logo-extrem-sport-footer.svg"
                 alt="Extreme Sports Events"
+                width={120}
+                height={48}
                 className="h-12 w-auto"
               />
               <span className="font-display text-xl tracking-wider text-foreground">
@@ -54,18 +49,16 @@ export const Footer = () => {
             {/* Social Links */}
             <div className="flex gap-3">
               {socialLinks.map((social) => (
-                <motion.a
+                <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
                   className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" aria-hidden="true" />
-                </motion.a>
+                </a>
               ))}
             </div>
           </div>
@@ -76,9 +69,11 @@ export const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.activities.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} 
+                  <a
+                    href={link.href}
                     {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
-                    className="text-muted-foreground hover:text-primary transition-colors">
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     {link.label}
                   </a>
                 </li>
@@ -105,20 +100,20 @@ export const Footer = () => {
             <h4 className="font-display text-lg text-foreground mb-4">Contact</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" aria-hidden="true" />
                 <span className="text-muted-foreground text-sm">Marrakech, Agadir, Taghazout, Maroc</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-primary flex-shrink-0" />
+                <Phone className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
                 <a
-                  href="tel:+212600000000"
+                  href="tel:+212661447158"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm"
                 >
                   +212 661-447158
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-primary flex-shrink-0" />
+                <Mail className="w-5 h-5 text-primary flex-shrink-0" aria-hidden="true" />
                 <a
                   href="mailto:contact@extremesportsevents.ma"
                   className="text-muted-foreground hover:text-primary transition-colors text-sm break-all"
@@ -136,7 +131,7 @@ export const Footer = () => {
         <div className="container py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()}{" "} Extreme Sports Events, appuyé par{" "}
+              © {new Date().getFullYear()}{" "}Extreme Sports Events, appuyé par{" "}
               <a
                 href="https://monarkit.net"
                 target="_blank"

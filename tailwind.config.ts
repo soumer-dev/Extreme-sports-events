@@ -18,8 +18,8 @@ export default {
 },
     extend: {
       fontFamily: {
-        display: ['"Bebas Neue"', 'sans-serif'],
-        sans: ['Inter', 'sans-serif'],
+        display: ["var(--font-bebas)", '"Bebas Neue"', 'sans-serif'],
+        sans: ["var(--font-inter)", 'Inter', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

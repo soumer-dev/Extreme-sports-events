@@ -41,9 +41,11 @@ export const Navbar = () => {
           {/* Logo */}
           <a href="#" className="flex items-center gap-3 group">
             <img
+              src="/lovable-uploads/logo-extrem-sport-2.svg"
               alt="Extreme Sports Events Logo"
-              className="h-12 w-auto transition-transform duration-300 group-hover:scale-105" 
-              src="/lovable-uploads/logo-extrem-sport-2.svg" 
+              width={120}
+              height={48}
+              className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
             />
             
             <span className="font-display text-xl tracking-wider text-foreground hidden sm:block">

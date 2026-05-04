@@ -9,9 +9,60 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { trackReservationSubmit } from "@/lib/gtm";
 
+// ─── reCAPTCHA lazy loader ────────────────────────────────────────────────────
+// We do NOT import react-google-recaptcha-v3 at the top level.
+// The script is injected only when the user first focuses a form field,
+// keeping it completely out of the initial JS bundle.
+
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+
+// Typed window extension for grecaptcha
+type GrecaptchaWindow = Window & {
+  grecaptcha: {
+    ready: (cb: () => void) => void;
+    execute: (key: string, opts: { action: string }) => Promise<string>;
+  };
+};
+
+/** Injects the reCAPTCHA v3 script once and resolves when ready. */
+function loadRecaptchaScript(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve();
+    const win = window as unknown as GrecaptchaWindow;
+    if (win.grecaptcha) {
+      win.grecaptcha.ready(resolve);
+      return;
+    }
+    if (document.getElementById("recaptcha-script")) {
+      // Script tag exists but not yet loaded — wait for it
+      const existing = document.getElementById("recaptcha-script") as HTMLScriptElement;
+      existing.addEventListener("load", () => {
+        (window as unknown as GrecaptchaWindow).grecaptcha.ready(resolve);
+      });
+      return;
+    }
+    const script = document.createElement("script");
+    script.id = "recaptcha-script";
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      (window as unknown as GrecaptchaWindow).grecaptcha.ready(resolve);
+    };
+    document.body.appendChild(script);
+  });
+}
+
+/** Execute reCAPTCHA v3 and return a token. Returns "" if not configured. */
+async function getRecaptchaToken(action: string): Promise<string> {
+  if (!RECAPTCHA_SITE_KEY) return "";
+  await loadRecaptchaScript();
+  return (window as unknown as GrecaptchaWindow).grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
+}
+
+// ─── Activities list ──────────────────────────────────────────────────────────
 const activities = [
   { value: "paramoteur", label: "Paramoteur" },
   { value: "parapente", label: "Parapente" },
@@ -20,24 +71,24 @@ const activities = [
   { value: "fly-taghazout", label: "FLY TAGHAZOUT" },
 ];
 
+// ─── Component ────────────────────────────────────────────────────────────────
 export const ReservationSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [activitiesOpen, setActivitiesOpen] = useState(false);
   const [activitiesError, setActivitiesError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
 
-  const [name, setName]                 = useState("");
-  const [email, setEmail]               = useState("");
-  const [phone, setPhone]               = useState("");
-  const [date, setDate]                 = useState("");
+  const [name, setName]               = useState("");
+  const [email, setEmail]             = useState("");
+  const [phone, setPhone]             = useState("");
+  const [date, setDate]               = useState("");
   const [participants, setParticipants] = useState("");
-  const [message, setMessage]           = useState("");
-
-  // reCAPTCHA v3 — hook is a no-op when the provider is not mounted
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  const [message, setMessage]         = useState("");
 
   // Auto-hide success banner after 5 seconds
   useEffect(() => {
@@ -45,6 +96,13 @@ export const ReservationSection = () => {
     const timer = setTimeout(() => setIsSuccess(false), 5000);
     return () => clearTimeout(timer);
   }, [isSuccess]);
+
+  // Lazy-load reCAPTCHA on first focus of any form field
+  const handleFormFocus = useCallback(() => {
+    if (recaptchaLoaded || !RECAPTCHA_SITE_KEY) return;
+    setRecaptchaLoaded(true);
+    loadRecaptchaScript().catch(() => {/* silent — form still works without reCAPTCHA */});
+  }, [recaptchaLoaded]);
 
   const toggleActivity = useCallback((value: string) => {
     setSelectedActivities((prev) => {
@@ -74,12 +132,7 @@ export const ReservationSection = () => {
     const form = e.target as HTMLFormElement;
 
     try {
-      // Generate reCAPTCHA v3 token (invisible to the user).
-      // Falls back to empty string when the provider is not configured.
-      let recaptchaToken = "";
-      if (executeRecaptcha) {
-        recaptchaToken = await executeRecaptcha("reservation_submit");
-      }
+      const recaptchaToken = await getRecaptchaToken("reservation_submit");
 
       const res = await fetch("/api/reservation", {
         method: "POST",
@@ -102,7 +155,6 @@ export const ReservationSection = () => {
         return;
       }
 
-      // Fire GTM / GA conversion event
       trackReservationSubmit();
 
       setIsSuccess(true);
@@ -118,9 +170,13 @@ export const ReservationSection = () => {
   };
 
   return (
-    <section id="reservation" aria-labelledby="reservation-heading" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
+    <section
+      id="reservation"
+      aria-labelledby="reservation-heading"
+      className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden"
+    >
       {/* Background decoration */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
       </div>
@@ -137,7 +193,10 @@ export const ReservationSection = () => {
             <span className="text-primary font-display text-xl tracking-wider mb-4 block">
               RÉSERVEZ VOTRE EXPÉRIENCE
             </span>
-            <h2 id="reservation-heading" className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
+            <h2
+              id="reservation-heading"
+              className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6"
+            >
               Prêt à vivre <span className="text-gradient">l'adrénaline</span> ?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
@@ -156,7 +215,7 @@ export const ReservationSection = () => {
                   className="flex items-center gap-4 p-4 rounded-xl bg-card/50 border border-border"
                 >
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <contact.icon className="w-6 h-6 text-primary" />
+                    <contact.icon className="w-6 h-6 text-primary" aria-hidden="true" />
                   </div>
                   <div>
                     <div className="text-sm text-muted-foreground">{contact.label}</div>
@@ -168,14 +227,9 @@ export const ReservationSection = () => {
 
             {/* Trust badges */}
             <div className="flex flex-wrap gap-4">
-              {["Réponse sous 24h"].map((badge) => (
-                <span
-                  key={badge}
-                  className="px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20"
-                >
-                  {badge}
-                </span>
-              ))}
+              <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
+                Réponse sous 24h
+              </span>
             </div>
           </motion.div>
 
@@ -185,7 +239,12 @@ export const ReservationSection = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <form onSubmit={handleSubmit} className="p-8 lg:p-10 rounded-3xl bg-card border border-border shadow-card">
+            {/* onFocus bubbles up from any child input — triggers reCAPTCHA lazy load */}
+            <form
+              onSubmit={handleSubmit}
+              onFocus={handleFormFocus}
+              className="p-8 lg:p-10 rounded-3xl bg-card border border-border shadow-card"
+            >
               <h3 className="font-display text-2xl text-foreground mb-6">Formulaire de réservation</h3>
 
               <div className="space-y-5">
@@ -256,10 +315,10 @@ export const ReservationSection = () => {
                       >
                         <span className={selectedActivities.length === 0 ? "text-muted-foreground" : "text-foreground"}>
                           {selectedActivities.length === 0
-                            ? <>Type d'activité *</>
+                            ? "Type d'activité *"
                             : `${selectedActivities.length} activité(s) sélectionnée(s)`}
                         </span>
-                        <ChevronDown className="h-4 w-4 opacity-50" />
+                        <ChevronDown className="h-4 w-4 opacity-50" aria-hidden="true" />
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-2" align="start">
@@ -280,7 +339,7 @@ export const ReservationSection = () => {
                     </PopoverContent>
                   </Popover>
 
-                  {/* Tags sélectionnés */}
+                  {/* Selected tags */}
                   {selectedActivities.length > 0 && (
                     <div className="flex flex-wrap gap-2 pt-1">
                       {selectedActivities.map((value) => {
@@ -305,7 +364,6 @@ export const ReservationSection = () => {
                     </div>
                   )}
 
-                  {/* Message d'aide ou d'erreur */}
                   {activitiesError ? (
                     <p className="text-destructive text-xs mt-1">Veuillez sélectionner au moins une activité.</p>
                   ) : (
@@ -365,12 +423,12 @@ export const ReservationSection = () => {
                 <Button type="submit" variant="hero" size="xl" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
-                      <span className="animate-spin mr-2">◌</span>
+                      <span className="animate-spin mr-2" aria-hidden="true">◌</span>
                       Envoi en cours...
                     </>
                   ) : (
                     <>
-                      <Send className="w-5 h-5 mr-2" />
+                      <Send className="w-5 h-5 mr-2" aria-hidden="true" />
                       Réserver maintenant
                     </>
                   )}

@@ -1,14 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Compress responses
+
+  // Compress all responses with gzip/brotli
   compress: true,
+
+  // Reduce bundle size by removing source maps in production
+  productionBrowserSourceMaps: false,
+
   images: {
-    // Serve modern formats (avif first, then webp)
+    // Serve AVIF first (best compression), then WebP as fallback
     formats: ["image/avif", "image/webp"],
-    // Reasonable device sizes for responsive images
+    // Responsive breakpoints matching the design
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Minimum cache TTL: 1 year for optimized images
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: "https",
@@ -16,7 +23,9 @@ const nextConfig = {
       },
     ],
   },
+
   experimental: {
+    // Tree-shake specific Radix + lucide packages to reduce bundle
     optimizePackageImports: [
       "@radix-ui/react-accordion",
       "@radix-ui/react-alert-dialog",
@@ -34,7 +43,8 @@ const nextConfig = {
       "framer-motion",
     ],
   },
-  // Security headers
+
+  // Security + caching headers
   async headers() {
     return [
       {
@@ -51,7 +61,17 @@ const nextConfig = {
         ],
       },
       {
-        // Cache static assets aggressively
+        // Immutable cache for hashed static assets
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        // Long cache for images
         source: "/images/(.*)",
         headers: [
           {

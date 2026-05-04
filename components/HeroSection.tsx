@@ -10,12 +10,18 @@ export const HeroSection = () => {
       aria-label="Bienvenue chez Extreme Sports Events"
       className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden"
     >
+      {/*
+       * Hero background image — rendered as plain HTML, no JS dependency.
+       * priority + fetchPriority="high" ensures the browser fetches this
+       * as the highest-priority resource (LCP element).
+       */}
       <div className="absolute inset-0">
         <Image
           src="/images/hero-activites.webp"
           alt="Paramoteur au-dessus des falaises du Maroc"
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
           className="object-cover"
           quality={85}
@@ -25,7 +31,7 @@ export const HeroSection = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(0,0,0,0.5)_100%)]" aria-hidden="true" />
       </div>
 
-      {/* Content */}
+      {/* Content — animated after hydration */}
       <div className="relative z-10 container text-center">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -44,7 +50,7 @@ export const HeroSection = () => {
             <span className="text-sm font-medium text-primary">Marrakech • Agadir • Taghazout</span>
           </motion.div>
 
-          {/* Main Headline */}
+          {/* Main Headline — H1, no animation delay to avoid CLS */}
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-foreground leading-none mb-6">
             Vivez{" "}
             <span className="text-gradient">l'Adrénaline</span>

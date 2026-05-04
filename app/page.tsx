@@ -1,14 +1,22 @@
+// ─── Above-the-fold: import directly (no dynamic) ────────────────────────────
 import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
-import { AboutSection } from "@/components/AboutSection";
-import { ActivitiesSection } from "@/components/ActivitiesSection";
-import { FlyTaghazoutSection } from "@/components/FlyTaghazoutSection";
-import { DestinationsSection } from "@/components/DestinationsSection";
-import { ReservationSection } from "@/components/ReservationSection";
-import { Footer } from "@/components/Footer";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { WhyUsSection } from "@/components/WhyUsSection";
 
+// ─── Server components: zero client JS ───────────────────────────────────────
+import { AboutSection } from "@/components/AboutSection";
+import { DestinationsSection } from "@/components/DestinationsSection";
+import { WhyUsSection } from "@/components/WhyUsSection";
+import { Footer } from "@/components/Footer";
+
+// ─── Below-the-fold client components: code-split via dynamic imports ─────────
+import {
+  ActivitiesSection,
+  FlyTaghazoutSection,
+  ReservationSection,
+  WhatsAppButton,
+} from "@/components/DynamicSections";
+
+// ─── Structured Data ──────────────────────────────────────────────────────────
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
@@ -43,8 +51,7 @@ const structuredData = {
         itemOffered: {
           "@type": "SportsEvent",
           name: "Paramoteur",
-          description:
-            "Vol proche du sol offrant une sensation de liberté pure au Maroc.",
+          description: "Vol proche du sol offrant une sensation de liberté pure au Maroc.",
         },
       },
       {
@@ -76,14 +83,14 @@ const structuredData = {
         itemOffered: {
           "@type": "SportsEvent",
           name: "FLY TAGHAZOUT",
-          description:
-            "Survol des plages mythiques de Taghazout, falaises sauvages et spots de surf.",
+          description: "Survol des plages mythiques de Taghazout, falaises sauvages et spots de surf.",
         },
       },
     ],
   },
 };
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
     <>

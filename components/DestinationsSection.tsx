@@ -1,7 +1,4 @@
-"use client";
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+// Server component — static content, no client JS needed
 import { MapPin, Plane, Sun, Waves, Mountain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -42,39 +39,37 @@ const destinations = [
 ];
 
 export const DestinationsSection = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
   return (
-    <section id="destinations" aria-labelledby="destinations-heading" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
+    <section
+      id="destinations"
+      aria-labelledby="destinations-heading"
+      className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden"
+    >
       {/* Background decoration */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -translate-x-1/2" />
         <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl translate-x-1/2" />
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 relative z-10" ref={ref}>
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <span className="text-primary font-display text-xl tracking-wider mb-4 block">ZONES D'INTERVENTION</span>
-          <h2 id="destinations-heading" className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="text-primary font-display text-xl tracking-wider mb-4 block">
+            ZONES D'INTERVENTION
+          </span>
+          <h2
+            id="destinations-heading"
+            className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6"
+          >
             Où profiter de vos aventures <span className="text-gradient">au Maroc</span>
           </h2>
-        </motion.div>
+        </div>
 
         {/* Main Destinations */}
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8 mb-12" >
-          {destinations.map((destination, index) => (
-            <motion.article
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8 mb-12">
+          {destinations.map((destination) => (
+            <article
               key={destination.name}
-              initial={{ opacity: 0, y: 50 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.15 }}
               className={`group relative rounded-2xl p-8 border transition-all duration-500 ${
                 destination.featured
                   ? "bg-gradient-card border-primary/30 shadow-[0_0_20px_hsl(349_100%_41%/0.1)]"
@@ -84,20 +79,23 @@ export const DestinationsSection = () => {
               {/* Featured Badge */}
               {destination.featured && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary rounded-full">
-                  <span className="text-xs font-bold text-primary-foreground uppercase tracking-wider">Populaire</span>
+                  <span className="text-xs font-bold text-primary-foreground uppercase tracking-wider">
+                    Populaire
+                  </span>
                 </div>
               )}
 
               {/* Icon */}
               <div
                 className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${destination.color} flex items-center justify-center mb-6`}
+                aria-hidden="true"
               >
                 <destination.icon className="w-8 h-8 text-primary" />
               </div>
 
               {/* Content */}
               <div className="flex items-center gap-2 mb-4">
-                <MapPin className="w-5 h-5 text-primary" />
+                <MapPin className="w-5 h-5 text-primary" aria-hidden="true" />
                 <h3 className="font-display text-3xl text-foreground">{destination.name}</h3>
               </div>
 
@@ -114,21 +112,16 @@ export const DestinationsSection = () => {
                   </span>
                 ))}
               </div>
-            </motion.article>
+            </article>
           ))}
         </div>
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-center"
-        >
+        <div className="text-center">
           <Button variant="outline" size="lg" asChild>
             <a href="#reservation">Demander une disponibilité</a>
           </Button>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

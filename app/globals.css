@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap&font-display=swap');
+/* Fonts are loaded via next/font in layout.tsx — no @import needed here */
 
 @tailwind base;
 @tailwind components;
@@ -77,24 +77,24 @@
 
   body {
      @apply bg-background text-foreground font-sans antialiased;
-  font-family: 'Inter', sans-serif;
-  overflow-x: clip; /* clip au lieu de hidden */
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  overflow-x: clip;
  
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
     @apply tracking-wide;
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: var(--font-bebas), 'Bebas Neue', sans-serif;
   }
 
   .font-body {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-inter), 'Inter', sans-serif;
   }
 
   .text-gradient {

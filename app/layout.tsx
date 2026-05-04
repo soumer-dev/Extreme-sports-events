@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Bebas_Neue, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import {
@@ -6,12 +7,32 @@ import {
   GoogleTagManagerNoScript,
 } from "@/components/GoogleTagManager";
 
+// ─── Fonts via next/font (self-hosted, no render-blocking request) ────────────
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-bebas",
+  preload: true,
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+  preload: true,
+  // Only load the weights actually used in the design
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+// ─── Metadata ─────────────────────────────────────────────────────────────────
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://extremesportsevents.ma";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Extreme Sports Events — Sports Aériens au Maroc | Paramoteur, Parapente, Parachutisme",
+    default:
+      "Extreme Sports Events — Sports Aériens au Maroc | Paramoteur, Parapente, Parachutisme",
     template: "%s | Extreme Sports Events Maroc",
   },
   description:
@@ -76,22 +97,33 @@ export const viewport = {
   initialScale: 1,
 };
 
+// ─── Root Layout ──────────────────────────────────────────────────────────────
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html
+      lang="fr"
+      suppressHydrationWarning
+      className={`${bebasNeue.variable} ${inter.variable}`}
+    >
       <head>
-        {/* Preconnect to Google Fonts for faster font loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Google Tag Manager — loads after page is interactive */}
+        {/* Preload LCP hero image — browser hint before React hydrates */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-activites.webp"
+          type="image/webp"
+          // @ts-expect-error — fetchpriority is valid HTML but not yet in React types
+          fetchpriority="high"
+        />
+        {/* Google Tag Manager — afterInteractive, does not block rendering */}
         <GoogleTagManagerScript />
       </head>
       <body>
-        {/* GTM noscript fallback — must be first child of body */}
+        {/* GTM noscript fallback */}
         <GoogleTagManagerNoScript />
         <Providers>{children}</Providers>
       </body>
