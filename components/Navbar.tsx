@@ -36,7 +36,7 @@ export const Navbar = () => {
         "bg-white"}`
       }>
       
-      <nav className="container">
+      <nav className="container" aria-label="Navigation principale">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a href="#" className="flex items-center gap-3 group">
@@ -57,10 +57,10 @@ export const Navbar = () => {
             <a
               key={link.href}
               href={link.href}
-              className="font-sans text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 relative group">
+              className="font-sans text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-1">
               
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" aria-hidden="true" />
               </a>
             )}
           </div>
@@ -75,10 +75,12 @@ export const Navbar = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
-            aria-label="Toggle menu">
-            
-            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            className="lg:hidden p-2 text-foreground hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+            aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
+          >
+            {isMobileMenuOpen ? <X size={28} aria-hidden="true" /> : <Menu size={28} aria-hidden="true" />}
           </button>
         </div>
       </nav>
@@ -87,6 +89,7 @@ export const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen &&
         <motion.div
+          id="mobile-menu"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
@@ -102,13 +105,13 @@ export const Navbar = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block font-display text-2xl text-foreground hover:text-primary transition-colors py-2">
+              className="block font-display text-2xl text-foreground hover:text-primary transition-colors py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
               
                   {link.label}
                 </motion.a>
             )}
               <Button variant="hero" size="xl" className="w-full mt-6" asChild>
-                <a href="#reservation">Réserver Maintenant</a>
+                <a href="#reservation" onClick={() => setIsMobileMenuOpen(false)}>Réserver Maintenant</a>
               </Button>
             </div>
           </motion.div>

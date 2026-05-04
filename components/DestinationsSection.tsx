@@ -32,23 +32,21 @@ const destinations = [
     featured: true,
   },
   {
-  name: "Taroudant & Beni Mellal",
-  description:
-    "Les deux zones incontournables du Maroc pour le parachutisme. Sauts spectaculaires avec des paysages variés entre plaines, montagnes et horizons dégagés.",
-  icon: Mountain,
-  activities: ["Parachutisme"],
-  color: "from-green-500/20 to-emerald-500/20",
-},
+    name: "Taroudant & Beni Mellal",
+    description:
+      "Les deux zones incontournables du Maroc pour le parachutisme. Sauts spectaculaires avec des paysages variés entre plaines, montagnes et horizons dégagés.",
+    icon: Mountain,
+    activities: ["Parachutisme"],
+    color: "from-green-500/20 to-emerald-500/20",
+  },
 ];
-
-const otherDestinations = ["Beni Mellal", "Taroudant"];
 
 export const DestinationsSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="destinations" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
+    <section id="destinations" aria-labelledby="destinations-heading" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl -translate-x-1/2" />
@@ -64,7 +62,7 @@ export const DestinationsSection = () => {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="text-primary font-display text-xl tracking-wider mb-4 block">ZONES D'INTERVENTION</span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
+          <h2 id="destinations-heading" className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
             Où profiter de vos aventures <span className="text-gradient">au Maroc</span>
           </h2>
         </motion.div>
@@ -120,15 +118,13 @@ export const DestinationsSection = () => {
           ))}
         </div>
 
-        {/* Other Destinations */}
+        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-center"
         >
-          
-          
           <Button variant="outline" size="lg" asChild>
             <a href="#reservation">Demander une disponibilité</a>
           </Button>

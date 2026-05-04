@@ -17,7 +17,7 @@ export const AboutSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
+    <section id="about" aria-labelledby="about-heading" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
@@ -35,7 +35,7 @@ export const AboutSection = () => {
             <span className="text-primary font-display text-xl tracking-wider mb-4 block">
               QUI SOMMES-NOUS
             </span>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
+            <h2 id="about-heading" className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
               L'Excellence des{" "}
               <span className="text-gradient">Sports Aériens</span>
             </h2>
@@ -79,9 +79,9 @@ export const AboutSection = () => {
           >
             <div className="relative aspect-square max-w-lg mx-auto">
               {/* Decorative circles */}
-              <div className="absolute inset-0 border-2 border-primary/20 rounded-full animate-pulse" />
-              <div className="absolute inset-8 border-2 border-primary/30 rounded-full" />
-              <div className="absolute inset-16 border-2 border-primary/40 rounded-full" />
+              <div className="absolute inset-0 border-2 border-primary/20 rounded-full animate-pulse" aria-hidden="true" />
+              <div className="absolute inset-8 border-2 border-primary/30 rounded-full" aria-hidden="true" />
+              <div className="absolute inset-16 border-2 border-primary/40 rounded-full" aria-hidden="true" />
               
               {/* Center content */}
               <div className="absolute inset-24 bg-gradient-card rounded-full flex flex-col items-center justify-center text-center p-6 border border-border shadow-glow">

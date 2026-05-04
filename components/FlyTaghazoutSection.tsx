@@ -2,9 +2,9 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Check, Star, Camera, Users, Award } from "lucide-react";
+import { Star, Camera, Users, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import taghazoutImg from "@/assets/taghazout.webp";
+import Image from "next/image";
 
 const features = [
   {
@@ -32,16 +32,20 @@ export const FlyTaghazoutSection = () => {
   return (
     <section
       id="fly-taghazout"
+      aria-labelledby="fly-taghazout-heading"
       className="relative py-24 lg:py-32 overflow-hidden"
     >
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img
+        <Image
           src="/images/taghazout.webp"
-          alt="Vue aérienne de Taghazout"
-          className="w-full h-full object-cover"
+          alt="Vue aérienne de Taghazout, Maroc"
+          fill
+          sizes="100vw"
+          className="object-cover"
+          quality={80}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/70" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/70" aria-hidden="true" />
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10" ref={ref}>
@@ -60,7 +64,7 @@ export const FlyTaghazoutSection = () => {
               </span>
             </div>
 
-            <h2 className="font-display text-5xl md:text-6xl lg:text-7xl text-foreground leading-none mb-6">
+            <h2 id="fly-taghazout-heading" className="font-display text-5xl md:text-6xl lg:text-7xl text-foreground leading-none mb-6">
               FLY{" "}
               <span className="text-gradient">TAGHAZOUT</span>
             </h2>

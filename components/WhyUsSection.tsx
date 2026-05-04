@@ -41,7 +41,7 @@ export const WhyUsSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="pourquoi-nous" className="py-24 lg:py-32 bg-background relative overflow-hidden">
+    <section id="pourquoi-nous" aria-labelledby="pourquoi-nous-heading" className="py-24 lg:py-32 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4 lg:px-8" ref={ref}>
         {/* Header */}
         <motion.div
@@ -53,7 +53,7 @@ export const WhyUsSection = () => {
           <span className="text-primary font-display text-xl tracking-wider mb-4 block">
             POURQUOI NOUS CHOISIR
           </span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight">
+          <h2 id="pourquoi-nous-heading" className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight">
             L'excellence au service de{" "}
             <span className="text-gradient">vos sensations</span>
           </h2>

@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { Instagram, Facebook, Youtube, MapPin, Phone, Mail, Target } from "lucide-react";
-import logo from "@/assets/logo.png";
+import { Instagram, Facebook, MapPin, Phone, Mail } from "lucide-react";
 
 const footerLinks = {
   activities: [
@@ -59,19 +58,20 @@ export const Footer = () => {
                   key={social.label}
                   href={social.href}
                   target="_blank"
+                  rel="noopener noreferrer"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors"
+                  className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   aria-label={social.label}
                 >
-                  <social.icon className="w-5 h-5" />
+                  <social.icon className="w-5 h-5" aria-hidden="true" />
                 </motion.a>
               ))}
             </div>
           </div>
 
           {/* Activities */}
-          <div>
+          <nav aria-label="Activités">
             <h4 className="font-display text-lg text-foreground mb-4">Activités</h4>
             <ul className="space-y-3">
               {footerLinks.activities.map((link) => (
@@ -84,10 +84,10 @@ export const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Destinations */}
-          <div>
+          <nav aria-label="Destinations">
             <h4 className="font-display text-lg text-foreground mb-4">Destinations</h4>
             <ul className="space-y-3">
               {footerLinks.destinations.map((link) => (
@@ -98,7 +98,7 @@ export const Footer = () => {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
           <div>
@@ -136,7 +136,7 @@ export const Footer = () => {
         <div className="container py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()}{" "}  Etreme Sports Events, appuyé par{" "}
+              © {new Date().getFullYear()}{" "} Extreme Sports Events, appuyé par{" "}
               <a
                 href="https://monarkit.net"
                 target="_blank"

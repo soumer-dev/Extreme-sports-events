@@ -4,6 +4,7 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 const activities = [
   {
     id: "paramoteur",
@@ -40,7 +41,7 @@ export const ActivitiesSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="activites" className="py-24 lg:py-32 bg-background relative overflow-hidden">
+    <section id="activites" aria-labelledby="activites-heading" className="py-24 lg:py-32 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4 lg:px-8" ref={ref}>
         {/* Header */}
         <motion.div
@@ -52,7 +53,7 @@ export const ActivitiesSection = () => {
           <span className="text-primary font-display text-xl tracking-wider mb-4 block">
             NOS ACTIVITÉS EXTRÊMES
           </span>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
+          <h2 id="activites-heading" className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
             Vivez l'adrénaline, l'évasion et des moments qui restent{" "}
             <span className="text-gradient">gravés</span>
           </h2>
@@ -70,16 +71,18 @@ export const ActivitiesSection = () => {
             >
               {/* Image */}
               <div className="relative h-72 overflow-hidden">
-                <img
+                <Image
                   src={activity.image}
                   alt={activity.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/50 to-transparent" aria-hidden="true" />
                 
                 {/* Activity Number */}
-                <div className="absolute top-4 left-4 w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center">
+                <div className="absolute top-4 left-4 w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center" aria-hidden="true">
                   <span className="font-display text-xl text-primary-foreground">
                     0{index + 1}
                   </span>

@@ -118,7 +118,7 @@ export const ReservationSection = () => {
   };
 
   return (
-    <section id="reservation" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
+    <section id="reservation" aria-labelledby="reservation-heading" className="py-24 lg:py-32 bg-gradient-dark relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl translate-x-1/2 -translate-y-1/2" />
@@ -137,7 +137,7 @@ export const ReservationSection = () => {
             <span className="text-primary font-display text-xl tracking-wider mb-4 block">
               RÉSERVEZ VOTRE EXPÉRIENCE
             </span>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
+            <h2 id="reservation-heading" className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight mb-6">
               Prêt à vivre <span className="text-gradient">l'adrénaline</span> ?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
@@ -192,12 +192,15 @@ export const ReservationSection = () => {
 
                 {/* Name */}
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                   <Input
                     type="text"
                     name="name"
+                    id="field-name"
                     placeholder="Nom et prénom *"
                     required
+                    aria-label="Nom et prénom"
+                    aria-required="true"
                     className="pl-12 h-12 bg-background border-border"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -206,28 +209,34 @@ export const ReservationSection = () => {
 
                 {/* Email */}
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                   <Input
                     type="email"
                     name="email"
+                    id="field-email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email *"
                     required
+                    aria-label="Adresse email"
+                    aria-required="true"
                     className="pl-12 h-12 bg-background border-border"
                   />
                 </div>
 
                 {/* Phone */}
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                   <Input
                     type="tel"
                     name="phone"
+                    id="field-phone"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="Téléphone *"
                     required
+                    aria-label="Numéro de téléphone"
+                    aria-required="true"
                     className="pl-12 h-12 bg-background border-border"
                   />
                 </div>
@@ -238,6 +247,9 @@ export const ReservationSection = () => {
                     <PopoverTrigger asChild>
                       <button
                         type="button"
+                        aria-label="Sélectionner les activités"
+                        aria-expanded={activitiesOpen}
+                        aria-haspopup="listbox"
                         className={`flex h-12 w-full items-center justify-between rounded-md border ${
                           activitiesError ? "border-destructive" : "border-border"
                         } bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2`}
@@ -279,8 +291,13 @@ export const ReservationSection = () => {
                             className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20"
                           >
                             {activity?.label}
-                            <button type="button" onClick={() => removeActivity(value)} className="hover:text-primary/70">
-                              <X className="h-3 w-3" />
+                            <button
+                              type="button"
+                              onClick={() => removeActivity(value)}
+                              aria-label={`Retirer ${activity?.label}`}
+                              className="hover:text-primary/70"
+                            >
+                              <X className="h-3 w-3" aria-hidden="true" />
                             </button>
                           </span>
                         );
@@ -299,26 +316,32 @@ export const ReservationSection = () => {
                 {/* Date & Participants */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
-                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                     <Input
                       type="date"
                       name="date"
+                      id="field-date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
                       required
+                      aria-label="Date souhaitée"
+                      aria-required="true"
                       className="pl-12 h-12 bg-background border-border"
                     />
                   </div>
                   <div className="relative">
-                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                     <Input
                       type="number"
                       name="participants"
+                      id="field-participants"
                       value={participants}
                       onChange={(e) => setParticipants(e.target.value)}
                       placeholder="Participants *"
                       min="1"
                       required
+                      aria-label="Nombre de participants"
+                      aria-required="true"
                       className="pl-12 h-12 bg-background border-border"
                     />
                   </div>
@@ -326,12 +349,14 @@ export const ReservationSection = () => {
 
                 {/* Special Requests */}
                 <div className="relative">
-                  <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-muted-foreground" />
+                  <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-muted-foreground" aria-hidden="true" />
                   <Textarea
                     name="specialRequests"
+                    id="field-message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Demandes spéciales (optionnel)"
+                    aria-label="Demandes spéciales"
                     className="pl-12 pt-3 min-h-[100px] bg-background border-border resize-none"
                   />
                 </div>
@@ -359,11 +384,19 @@ export const ReservationSection = () => {
 
       {/* Success banner */}
       {isSuccess && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-2xl p-8 bg-white text-black rounded-xl shadow-2xl border border-gray-200 flex flex-col items-center justify-center animate-slideDown">
-          <X
-            className="absolute top-4 right-4 w-6 h-6 cursor-pointer hover:text-gray-500"
+        <div
+          role="alert"
+          aria-live="polite"
+          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-2xl p-8 bg-white text-black rounded-xl shadow-2xl border border-gray-200 flex flex-col items-center justify-center animate-slideDown"
+        >
+          <button
+            type="button"
+            aria-label="Fermer la notification"
+            className="absolute top-4 right-4 w-6 h-6 cursor-pointer hover:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
             onClick={() => setIsSuccess(false)}
-          />
+          >
+            <X className="w-6 h-6" aria-hidden="true" />
+          </button>
           <h3 className="text-2xl font-bold mb-2">Merci ! 🎉</h3>
           <p className="text-lg text-center">
             Votre réservation a été envoyée avec succès.<br />
