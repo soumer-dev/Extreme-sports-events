@@ -127,8 +127,8 @@ export default function RootLayout({
          * DNS prefetch for GTM — resolves the hostname early so the
          * lazyOnload script connects faster when it eventually fires.
          */}
-        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="//www.google-analytics.com" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>
       <body>
         {/* GTM noscript — must be first child of body */}

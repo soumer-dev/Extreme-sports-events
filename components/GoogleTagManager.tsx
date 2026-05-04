@@ -1,45 +1,50 @@
-/**
- * GoogleTagManager
- * Renders the GTM <script> in <head> and the <noscript> fallback in <body>.
- * Only renders when NEXT_PUBLIC_GTM_ID is set.
- *
- * Usage:
- *   <GoogleTagManagerScript /> — place inside <head> (or at top of <body>)
- *   <GoogleTagManagerNoScript /> — place as first child of <body>
- */
-
-import Script from "next/script";
+"use client";
+import { useEffect } from "react";
 import { GTM_ID } from "@/lib/gtm";
 
 export function GoogleTagManagerScript() {
-  if (!GTM_ID) return null;
+  useEffect(() => {
+    if (!GTM_ID) return;
 
-  return (
-    <Script
-      id="gtm-script"
-      strategy="lazyOnload"
-      dangerouslySetInnerHTML={{
-        __html: `
-(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GTM_ID}');
-        `.trim(),
-      }}
-    />
-  );
+    let loaded = false;
+    function loadGTM() {
+      if (loaded) return;
+      loaded = true;
+      window.dataLayer = window.dataLayer ?? [];
+      window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+      document.head.appendChild(script);
+      window.removeEventListener("scroll", loadGTM);
+      window.removeEventListener("click", loadGTM);
+      window.removeEventListener("keydown", loadGTM);
+    }
+
+    // Load after 4s idle OR on first user interaction — whichever comes first
+    const timer = setTimeout(loadGTM, 4000);
+    window.addEventListener("scroll", loadGTM, { once: true, passive: true });
+    window.addEventListener("click", loadGTM, { once: true });
+    window.addEventListener("keydown", loadGTM, { once: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", loadGTM);
+      window.removeEventListener("click", loadGTM);
+      window.removeEventListener("keydown", loadGTM);
+    };
+  }, []);
+
+  return null;
 }
 
 export function GoogleTagManagerNoScript() {
   if (!GTM_ID) return null;
-
   return (
     <noscript>
       <iframe
         src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-        height="0"
-        width="0"
+        height="0" width="0"
         style={{ display: "none", visibility: "hidden" }}
         title="Google Tag Manager"
       />
