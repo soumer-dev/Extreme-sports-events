@@ -463,15 +463,7 @@ export const ReservationSection = () => {
         </div>
       )}
 
-      <style jsx>{`
-        .animate-slideDown {
-          animation: slideDown 0.5s ease forwards;
-        }
-        @keyframes slideDown {
-          0%   { transform: translate(-50%, -200%); opacity: 0; }
-          100% { transform: translate(-50%, 0);     opacity: 1; }
-        }
-      `}</style>
+      {/* .animate-slideDown is defined in globals.css */}
     </section>
   );
 };

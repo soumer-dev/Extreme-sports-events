@@ -11,9 +11,8 @@ export const HeroSection = () => {
       className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden"
     >
       {/*
-       * Hero background image — rendered as plain HTML, no JS dependency.
-       * priority + fetchPriority="high" ensures the browser fetches this
-       * as the highest-priority resource (LCP element).
+       * LCP image — priority + fetchPriority="high" tells the browser to
+       * fetch this before any other resource. No JS needed for this to render.
        */}
       <div className="absolute inset-0">
         <Image
@@ -31,26 +30,30 @@ export const HeroSection = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_40%,_rgba(0,0,0,0.5)_100%)]" aria-hidden="true" />
       </div>
 
-      {/* Content — animated after hydration */}
+      {/* Content */}
       <div className="relative z-10 container text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-5xl mx-auto"
-        >
-          {/* Badge */}
+        <div className="max-w-5xl mx-auto">
+
+          {/*
+           * Badge — decorative, animate after paint.
+           * Uses willChange:auto to avoid promoting to compositor layer prematurely.
+           */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            style={{ willChange: "auto" }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm mb-8"
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
             <span className="text-sm font-medium text-primary">Marrakech • Agadir • Taghazout</span>
           </motion.div>
 
-          {/* Main Headline — H1, no animation delay to avoid CLS */}
+          {/*
+           * H1 — rendered immediately, NO opacity:0 initial state.
+           * This is the LCP text element. Hiding it delays LCP score.
+           * CSS handles the visual appearance from the start.
+           */}
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-foreground leading-none mb-6">
             Vivez{" "}
             <span className="text-gradient">l'Adrénaline</span>
@@ -58,11 +61,12 @@ export const HeroSection = () => {
             <span>des Sports Extrêmes</span>
           </h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — animate in after H1 is painted */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            style={{ willChange: "auto" }}
             className="text-lg sm:text-xl text-black max-w-2xl mx-auto mb-10 font-light leading-relaxed"
           >
             Vivez des sensations fortes et des moments inoubliables grâce à nos expériences aériennes haut de gamme,
@@ -71,16 +75,16 @@ export const HeroSection = () => {
 
           {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            style={{ willChange: "auto" }}
             className="flex flex-col items-center justify-center"
           >
             <div className="flex flex-col sm:flex-row items-center gap-4 mb-3">
               <Button variant="hero" size="xl" asChild>
                 <a href="#reservation">Réserver votre expérience</a>
               </Button>
-
               <Button variant="heroOutline" size="xl" className="group" asChild>
                 <a href="#activites">
                   <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" aria-hidden="true" />
@@ -92,22 +96,23 @@ export const HeroSection = () => {
             {/* Scroll Indicator */}
             <motion.a
               href="#about"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               aria-label="Défiler vers la section À propos"
-              className="flex flex-col items-center text-muted-foreground hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+              className="flex flex-col items-center text-muted-foreground hover:text-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded mt-2"
             >
               <ChevronDown className="w-6 h-6" aria-hidden="true" />
             </motion.a>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Side Stats */}
+      {/* Side Stats — decorative, hidden on mobile, animate after page load */}
       <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1, duration: 0.8 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        style={{ willChange: "auto" }}
         aria-label="Statistiques clés"
         className="absolute right-4 2xl:right-8 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-6"
       >

@@ -1,41 +1,37 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-// logo import removed
 
 const navLinks = [
-{ href: "#activites", label: "Activités" },
-{ href: "#fly-taghazout", label: "Fly Taghazout" },
-{ href: "#destinations", label: "Destinations" },
-{ href: "#pourquoi-nous", label: "Pourquoi Nous" },
-{ href: "#reservation", label: "Réservation" }];
-
+  { href: "#activites", label: "Activités" },
+  { href: "#fly-taghazout", label: "Fly Taghazout" },
+  { href: "#destinations", label: "Destinations" },
+  { href: "#pourquoi-nous", label: "Pourquoi Nous" },
+  { href: "#reservation", label: "Réservation" },
+];
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    // passive: true — never blocks scroll, removes jank
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ?
-        "bg-white border-b border-border shadow-lg" :
-        "bg-white"}`
-      }>
-      
+    // Plain <header> — no framer-motion entry animation.
+    // The slide-in was costing ~100ms of main-thread work on every page load.
+    // CSS transition handles the scroll shadow change instead.
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 bg-white ${
+        isScrolled ? "border-b border-border shadow-lg" : ""
+      }`}
+    >
       <nav className="container" aria-label="Navigation principale">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -47,7 +43,6 @@ export const Navbar = () => {
               height={48}
               className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
             />
-            
             <span className="font-display text-xl tracking-wider text-foreground hidden sm:block">
               EXTREME <span className="text-primary">SPORT</span> EVENTS
             </span>
@@ -55,16 +50,19 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) =>
-            <a
-              key={link.href}
-              href={link.href}
-              className="font-sans text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-1">
-              
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="font-sans text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-300 relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-1"
+              >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" aria-hidden="true" />
+                <span
+                  className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"
+                  aria-hidden="true"
+                />
               </a>
-            )}
+            ))}
           </div>
 
           {/* CTA Button */}
@@ -82,43 +80,46 @@ export const Navbar = () => {
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
           >
-            {isMobileMenuOpen ? <X size={28} aria-hidden="true" /> : <Menu size={28} aria-hidden="true" />}
+            {isMobileMenuOpen ? (
+              <X size={28} aria-hidden="true" />
+            ) : (
+              <Menu size={28} aria-hidden="true" />
+            )}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — AnimatePresence only runs when menu opens/closes */}
       <AnimatePresence>
-        {isMobileMenuOpen &&
-        <motion.div
-          id="mobile-menu"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-          className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-border">
-          
+        {isMobileMenuOpen && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25 }}
+            className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-border overflow-hidden"
+          >
             <div className="container mx-auto px-4 py-6 space-y-4">
-              {navLinks.map((link, index) =>
-            <motion.a
-              key={link.href}
-              href={link.href}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block font-display text-2xl text-foreground hover:text-primary transition-colors py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
-              
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block font-display text-2xl text-foreground hover:text-primary transition-colors py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+                >
                   {link.label}
-                </motion.a>
-            )}
+                </a>
+              ))}
               <Button variant="hero" size="xl" className="w-full mt-6" asChild>
-                <a href="#reservation" onClick={() => setIsMobileMenuOpen(false)}>Réserver Maintenant</a>
+                <a href="#reservation" onClick={() => setIsMobileMenuOpen(false)}>
+                  Réserver Maintenant
+                </a>
               </Button>
             </div>
           </motion.div>
-        }
+        )}
       </AnimatePresence>
-    </motion.header>);
-
+    </header>
+  );
 };

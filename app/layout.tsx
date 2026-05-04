@@ -7,7 +7,8 @@ import {
   GoogleTagManagerNoScript,
 } from "@/components/GoogleTagManager";
 
-// ─── Fonts via next/font (self-hosted, no render-blocking request) ────────────
+// ─── Fonts via next/font ──────────────────────────────────────────────────────
+// Self-hosted by Next.js — zero external network request, zero render-blocking.
 const bebasNeue = Bebas_Neue({
   weight: "400",
   subsets: ["latin"],
@@ -21,7 +22,6 @@ const inter = Inter({
   display: "swap",
   variable: "--font-inter",
   preload: true,
-  // Only load the weights actually used in the design
   weight: ["300", "400", "500", "600", "700"],
 });
 
@@ -110,7 +110,11 @@ export default function RootLayout({
       className={`${bebasNeue.variable} ${inter.variable}`}
     >
       <head>
-        {/* Preload LCP hero image — browser hint before React hydrates */}
+        {/*
+         * Preload the LCP hero image.
+         * The browser starts fetching this before React hydrates,
+         * giving the image a head-start on the critical path.
+         */}
         <link
           rel="preload"
           as="image"
@@ -119,13 +123,23 @@ export default function RootLayout({
           // @ts-expect-error — fetchpriority is valid HTML but not yet in React types
           fetchpriority="high"
         />
-        {/* Google Tag Manager — afterInteractive, does not block rendering */}
-        <GoogleTagManagerScript />
+        {/*
+         * DNS prefetch for GTM — resolves the hostname early so the
+         * lazyOnload script connects faster when it eventually fires.
+         */}
+        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="//www.google-analytics.com" />
       </head>
       <body>
-        {/* GTM noscript fallback */}
+        {/* GTM noscript — must be first child of body */}
         <GoogleTagManagerNoScript />
         <Providers>{children}</Providers>
+        {/*
+         * GTM script — strategy="lazyOnload" fires after the page is fully
+         * loaded and idle. This is the maximum deferral available in Next.js
+         * and eliminates GTM from the TBT critical path entirely.
+         */}
+        <GoogleTagManagerScript />
       </body>
     </html>
   );

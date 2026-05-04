@@ -208,6 +208,31 @@
   animation: pulse-whatsapp 2s ease-in-out infinite;
 }
 
+/* Success banner slide-down animation (ReservationSection) */
+@keyframes slideDown {
+  0%   { transform: translate(-50%, -200%); opacity: 0; }
+  100% { transform: translate(-50%, 0);     opacity: 1; }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.5s ease forwards;
+}
+
+/*
+ * content-visibility: auto — tells the browser to skip rendering
+ * below-the-fold sections until they are near the viewport.
+ * This is one of the highest-impact CSS performance properties available.
+ * contain-intrinsic-size prevents layout shift when the section is skipped.
+ */
+#activites,
+#fly-taghazout,
+#destinations,
+#pourquoi-nous,
+#reservation {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
